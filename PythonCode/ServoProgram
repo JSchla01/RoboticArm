@@ -1,0 +1,76 @@
+import machine
+import utime
+from machine import Pin, PWM
+from time import sleep
+
+button1 = machine.Pin(14, machine.Pin.IN, machine.Pin.PULL_DOWN)
+button2 = machine.Pin(15, machine.Pin.IN, machine.Pin.PULL_DOWN)
+button3 = machine.Pin(14, machine.Pin.IN, machine.Pin.PULL_DOWN)
+button4 = machine.Pin(15, machine.Pin.IN, machine.Pin.PULL_DOWN)
+
+servo_pin1 = machine.Pin(9)
+servo1 = PWM(servo_pin1)
+
+servo_pin2 = machine.Pin(10)
+servo2 = PWM(servo_pin2)
+
+servo_pin3 = machine.Pin(11)
+servo3 = PWM(servo_pin3)
+
+# Set Duty Cycles for 90-0 degree limits, and set middle duty for Servos
+max_duty = 3932
+min_duty = 1802
+duty1 = int(max_duty/2)
+duty2 = int(max_duty/2)
+duty3 = int(max_duty/2)
+
+#Set PWM frequency for Servos
+frequency = 50
+servo1.freq (frequency)
+servo2.freq (frequency)
+servo3.freq (frequency)
+
+#Set Servos at middle position, resetting where it was left off before
+servo1.duty_u16(duty1)
+servo2.duty_u16(duty2)
+servo3.duty_u16(duty3)
+sleep(2)
+  
+#While loop to read if buttons are pressed and adjust specific servos
+while True:    
+    if button1.value():
+        duty1 = duty1+500
+        if duty1 >= max_duty:
+            duty1 = max_duty
+        servo1.duty_u16(duty1)
+        sleep(0.1)
+        
+    if button2.value():
+        duty1 = duty1-500
+        if duty1 <= min_duty:
+            duty1 = min_duty
+        servo1.duty_u16(duty1)
+        sleep(0.1)
+        
+    if button3.value():
+        duty2 = duty2+500
+        duty3 = duty3-500
+        if duty2 >= max_duty:
+            duty2 = max_duty
+        if duty3 <= min_duty:
+            duty3 = min_duty
+        servo2.duty_u16(duty2)
+        servo3.duty_u16(duty3)
+        sleep(0.1)
+        
+    if button4.value():
+        duty3 = duty3+500
+        duty2 = duty2-500
+        if duty3 >= max_duty:
+            duty3 = max_duty
+        if duty2 <= min_duty:
+            duty2 = min_duty
+        servo2.duty_u16(duty2)
+        servo3.duty_u16(duty3)
+        sleep(0.1)
+        
